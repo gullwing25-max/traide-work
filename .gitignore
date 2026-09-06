@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 data/bars/*.parquet
 *.egg-info/
+.env
