@@ -85,7 +85,7 @@ def main() -> None:
         trades = load_sbi_trades(str(csv_path))
         roundtrips, stats = match_fifo(trades)
 
-        assert len(roundtrips) == 6, len(roundtrips)
+        assert len(roundtrips) == 5, len(roundtrips)
         assert stats.unmatched_close_count == 1 and stats.unmatched_close_qty == 100
         assert stats.genbiki_count == 1 and stats.genbiki_qty == 50
         assert stats.short_open_count == 1
@@ -98,8 +98,9 @@ def main() -> None:
         assert len(r2a) == 1 and abs(r2a.iloc[0]["qty"] - 100) < 1e-6 and abs(r2a.iloc[0]["actual_pl"] - 1000) < 1e-6
         assert len(r2b) == 1 and abs(r2b.iloc[0]["qty"] - 50) < 1e-6 and abs(r2b.iloc[0]["actual_pl"] - 500) < 1e-6
 
+        # 現引は経済的な決済ではないため往復レコードとしては出力されない
         r3 = roundtrips[roundtrips["code"] == "5555"]
-        assert len(r3) == 1 and abs(r3.iloc[0]["actual_pl"]) < 1e-6
+        assert len(r3) == 0, len(r3)
 
         price_index = PriceIndex(cache_dir=str(bars_dir))
         ns = [3, 5, 10, 15, 20, 25]

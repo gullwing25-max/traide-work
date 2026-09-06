@@ -5,8 +5,8 @@
 - 期首の持ち越し建玉(対応する新規買が履歴に無い返済/現引)は落とすが、
   件数・株数を必ずログに出す
 - 現引は「決済損益」が報告されない(売却ではなく現金での引き取りのため)。
-  ここでは実現損益0として扱い、その旨をログに残す。この扱いはPoCの簡略化であり
-  経済的な損益を正確に表すものではない。
+  FIFOキューからは除去するが、経済的な決済とは言えないため往復レコードとしては
+  出力しない。件数・株数はログとMatchStats.genbiki_count/qtyに記録する。
 """
 from __future__ import annotations
 
@@ -82,19 +82,22 @@ def match_fifo(trades: pd.DataFrame) -> tuple[pd.DataFrame, MatchStats]:
             lot = q[0]
             matched_qty = min(lot.qty, remaining)
             pl_alloc = row_pl * (matched_qty / row_qty) if row_qty > 0 else 0.0
-            roundtrips.append(
-                {
-                    "open_date": lot.open_date,
-                    "close_date": close_date,
-                    "code": code,
-                    "qty": matched_qty,
-                    "open_px": lot.open_px,
-                    "close_px": close_px,
-                    "hold_days": (close_date - lot.open_date).days,
-                    "actual_pl": pl_alloc,
-                    "close_kind": kind,
-                }
-            )
+            if kind != "現引":
+                # 現引は市場売却を伴わず経済的な決済とは言えないため、FIFOキューからは
+                # 除去するが「往復」としては計上しない(件数・株数は genbiki_count/qty で集計)。
+                roundtrips.append(
+                    {
+                        "open_date": lot.open_date,
+                        "close_date": close_date,
+                        "code": code,
+                        "qty": matched_qty,
+                        "open_px": lot.open_px,
+                        "close_px": close_px,
+                        "hold_days": (close_date - lot.open_date).days,
+                        "actual_pl": pl_alloc,
+                        "close_kind": kind,
+                    }
+                )
             lot.qty -= matched_qty
             remaining -= matched_qty
             if lot.qty <= 1e-9:
@@ -115,8 +118,8 @@ def match_fifo(trades: pd.DataFrame) -> tuple[pd.DataFrame, MatchStats]:
         )
     if stats.genbiki_count:
         logger.info(
-            "現引 %d件 (%s株) はFIFOキューから除外しましたが、実現損益は0として記録しています"
-            "(現引には市場価格でのP&Lが発生しないため)。",
+            "現引 %d件 (%s株) はFIFOキューから除外しましたが、市場売却を伴わないため"
+            "往復レコードとしては出力していません。",
             stats.genbiki_count,
             f"{stats.genbiki_qty:,.0f}",
         )

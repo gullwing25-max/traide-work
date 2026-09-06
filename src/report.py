@@ -92,8 +92,8 @@ def write_summary_md(
         f"{match_stats.unmatched_close_count}件, {match_stats.unmatched_close_qty:,.0f}株"
     )
     lines.append(
-        f"- 現引(現金引取り、実現損益なしとして0扱い): {match_stats.genbiki_count}件, "
-        f"{match_stats.genbiki_qty:,.0f}株"
+        f"- 現引(現金引取り、市場売却を伴わないため往復として計上せず除外): "
+        f"{match_stats.genbiki_count}件, {match_stats.genbiki_qty:,.0f}株"
     )
     if match_stats.short_open_count:
         lines.append(f"- 信用新規売(空売り、集計対象外): {match_stats.short_open_count}件")
@@ -180,8 +180,8 @@ def write_summary_md(
     )
     lines.append(
         "- **現引の扱い**: 現引(信用の現金引取り)は市場での売却を伴わないため決済損益が"
-        "報告されない。ここでは実現損益0として扱っているが、これは簡略化であり、実際の"
-        "経済的な損益(その後の資産価値の変動)を表すものではない。"
+        "報告されない。ここではFIFOキューからは除去するが、経済的な決済ではないため往復"
+        "レコードとしては出力していない(件数・株数は上記「未突合・除外」を参照)。"
     )
     lines.append(
         "- **保有日数の営業日カウント**: 実績決済がN営業日より前かどうかの判定には、"
