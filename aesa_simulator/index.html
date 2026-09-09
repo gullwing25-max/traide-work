@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AESA Ø300</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#0a0e13;
+    --panel:#10151c;
+    --panel-2:#161d26;
+    --panel-3:#1c2530;
+    --line:#26313d;
+    --line-strong:#3a4757;
+    --text:#e8edf3;
+    --text-muted:#9db0c3;
+    --text-faint:#5f7185;
+    --accent:#d98a4a;
+    --accent-soft:rgba(217,138,74,.16);
+    --trace:#e7ac6c;
+    --good:#5fd6b0;
+    --good-soft:rgba(95,214,176,.14);
+    --critical:#e2634f;
+    --critical-soft:rgba(226,99,79,.16);
+    --seq-0:#140d08;
+    --seq-1:#3a2414;
+    --seq-2:#6b3f20;
+    --seq-3:#a35a28;
+    --seq-4:#d98a4a;
+    --seq-5:#f2b877;
+    --seq-6:#fbe3bf;
+    --radius:10px;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"IBM Plex Sans", system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100%;
+  }
+  ::selection{ background:var(--accent-soft); }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+
+  .wrap{
+    max-width:1360px;
+    margin:0 auto;
+    padding:22px 22px 60px;
+  }
+
+  header.top{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px 28px;
+    padding-bottom:18px;
+    margin-bottom:20px;
+    border-bottom:1px solid var(--line);
+  }
+  header.top .id{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  h1{
+    font-family:"Big Shoulders Display", sans-serif;
+    font-weight:800;
+    font-size:38px;
+    letter-spacing:.02em;
+    margin:0;
+    line-height:1;
+    color:var(--text);
+    text-wrap:balance;
+  }
+  h1 span.mark{ color:var(--accent); }
+  header.top .tagline{
+    color:var(--text-muted);
+    font-size:13.5px;
+    max-width:52ch;
+    line-height:1.5;
+  }
+  .specline{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12px;
+    color:var(--text-faint);
+  }
+  .specline b{ color:var(--accent); font-weight:500; }
+
+  .board{
+    display:grid;
+    grid-template-columns:296px 1fr;
+    gap:20px;
+    align-items:start;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 16px 18px;
+  }
+
+  /* --- sidebar / controls --- */
+  aside.controls{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    position:sticky;
+    top:20px;
+  }
+  fieldset{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--panel);
+    padding:14px 14px 16px;
+    margin:0;
+  }
+  legend{
+    font-size:11px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    padding:0 6px;
+    font-weight:500;
+  }
+  .ctrl{ margin-top:12px; }
+  .ctrl:first-of-type{ margin-top:2px; }
+  .ctrl-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:12.5px;
+    color:var(--text-muted);
+    margin-bottom:6px;
+  }
+  .ctrl-label .val{
+    color:var(--text);
+    font-size:12.5px;
+  }
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:2px;
+    background:var(--line-strong);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:15px; height:15px;
+    border-radius:50%;
+    background:var(--accent);
+    border:2px solid #1a1108;
+    cursor:pointer;
+    margin-top:-1px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:13px; height:13px;
+    border-radius:50%;
+    background:var(--accent);
+    border:2px solid #1a1108;
+    cursor:pointer;
+  }
+  select{
+    width:100%;
+    background:var(--panel-3);
+    color:var(--text);
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    padding:7px 8px;
+    font-family:inherit;
+    font-size:13px;
+  }
+  .seg{
+    display:flex;
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .seg button{
+    flex:1;
+    background:var(--panel-3);
+    color:var(--text-muted);
+    border:none;
+    padding:7px 4px;
+    font-family:inherit;
+    font-size:12.5px;
+    cursor:pointer;
+    border-left:1px solid var(--line-strong);
+  }
+  .seg button:first-child{ border-left:none; }
+  .seg button.on{
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-weight:600;
+  }
+  .hint{
+    margin-top:10px;
+    font-size:11px;
+    color:var(--text-faint);
+    line-height:1.5;
+  }
+
+  /* --- right column --- */
+  main.stage{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    min-width:0;
+  }
+
+  .statgrid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+  }
+  .stat{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:12px 13px;
+    min-width:0;
+  }
+  .stat .lab{
+    font-size:10.5px;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin-bottom:6px;
+  }
+  .stat .v{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:19px;
+    color:var(--text);
+    font-variant-numeric:tabular-nums;
+  }
+  .stat .v .unit{
+    font-size:12px;
+    color:var(--text-muted);
+    margin-left:3px;
+  }
+  .stat .sub{
+    margin-top:3px;
+    font-size:11px;
+    color:var(--text-faint);
+    font-family:"IBM Plex Mono", monospace;
+  }
+  .stat.status{
+    grid-column:span 2;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 10px 5px 8px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .chip .dot{ width:7px; height:7px; border-radius:50%; }
+  .chip.good{ background:var(--good-soft); color:var(--good); border:1px solid rgba(95,214,176,.4); }
+  .chip.good .dot{ background:var(--good); }
+  .chip.critical{ background:var(--critical-soft); color:var(--critical); border:1px solid rgba(226,99,79,.45); }
+  .chip.critical .dot{ background:var(--critical); }
+  .status .detail{
+    font-size:11.5px;
+    color:var(--text-muted);
+    line-height:1.4;
+  }
+
+  .scopes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .scope-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+    gap:10px;
+  }
+  .scope-title{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--text);
+  }
+  .scope-sub{
+    font-size:10.5px;
+    color:var(--text-faint);
+    font-family:"IBM Plex Mono", monospace;
+  }
+  .canvas-holder{
+    position:relative;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  canvas{ display:block; }
+
+  .legend{
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:10.5px;
+    color:var(--text-faint);
+  }
+  .legend .bar{
+    flex:1;
+    height:8px;
+    border-radius:4px;
+    border:1px solid var(--line);
+  }
+
+  .cutpanel .canvas-holder{ width:100%; height:270px; }
+  .scopes .canvas-holder{ width:100%; aspect-ratio:1/1; }
+
+  .tooltip{
+    position:absolute;
+    pointer-events:none;
+    background:#05070a;
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    padding:6px 9px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:11px;
+    color:var(--text);
+    line-height:1.5;
+    white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,.5);
+    opacity:0;
+    transform:translate(-50%,-100%);
+    transition:opacity .08s;
+    z-index:5;
+  }
+  .tooltip.show{ opacity:1; }
+  .tooltip b{ color:var(--accent); font-weight:500; }
+
+  footer.note{
+    margin-top:6px;
+    font-size:11px;
+    color:var(--text-faint);
+    line-height:1.6;
+  }
+
+  @media (max-width:920px){
+    .board{ grid-template-columns:1fr; }
+    aside.controls{ position:static; }
+    .statgrid{ grid-template-columns:repeat(2,1fr); }
+    .stat.status{ grid-column:span 2; }
+    .scopes{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="id">
+      <h1>AESA <span class="mark">Ø300</span></h1>
+      <div class="tagline">直径300mmの円形フェーズドアレイ。開口内の素子配置と振幅テーパーから、走査ビームの遠方界パターンをその場で計算する。</div>
+    </div>
+    <div class="specline">
+      <span>開口径 <b>300&nbsp;mm</b>(固定)</span>
+      <span>アレイ方式 <b>Active&nbsp;ESA</b></span>
+      <span>格子 <b id="specLattice">三角(六方)</b></span>
+    </div>
+  </header>
+
+  <div class="board">
+
+    <aside class="controls">
+
+      <fieldset>
+        <legend>RF 諸元</legend>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>送信周波数</span><span class="val mono" id="vFreq">10.0 GHz</span></div>
+          <input type="range" id="freq" min="2" max="18" step="0.1" value="10" />
+        </div>
+        <div class="hint" id="bandHint">X バンド — 波長 30.0 mm</div>
+      </fieldset>
+
+      <fieldset>
+        <legend>アレイ構成</legend>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>素子間隔 d/λ</span><span class="val mono" id="vSpacing">0.50</span></div>
+          <input type="range" id="spacing" min="0.4" max="1.0" step="0.01" value="0.5" />
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>格子配列</span></div>
+          <div class="seg" id="latticeSeg">
+            <button data-v="triangular" class="on">三角(六方)</button>
+            <button data-v="square">正方</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>振幅テーパー</span></div>
+          <select id="taper">
+            <option value="0">一様照射(テーパーなし)</option>
+            <option value="1" selected>パラボラ (1-r²)&sup1; ・低SLL</option>
+            <option value="2">パラボラ² (1-r²)&sup2; ・最低SLL</option>
+          </select>
+        </div>
+        <div class="hint">円形開口の径方向振幅分布 a(r)=(1-r²)<sup>p</sup>。p が大きいほどサイドローブは下がるがビーム幅は広がる(Balanis の連続開口理論値を参照表示)。</div>
+      </fieldset>
+
+      <fieldset>
+        <legend>ビーム走査</legend>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>走査角 θ(ボアサイトから)</span><span class="val mono" id="vTheta">25°</span></div>
+          <input type="range" id="theta" min="0" max="65" step="1" value="25" />
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-label"><span>走査方位角 φ</span><span class="val mono" id="vPhi">0°</span></div>
+          <input type="range" id="phi" min="0" max="359" step="1" value="0" />
+        </div>
+        <div class="hint">位相制御のみで機械可動部なしに走査(AESA の特徴)。θ が大きいほど走査損失とグレーティングローブのリスクが増える。</div>
+      </fieldset>
+
+    </aside>
+
+    <main class="stage">
+
+      <div class="statgrid" id="statgrid"><!-- filled by JS --></div>
+
+      <div class="scopes">
+        <div class="panel">
+          <div class="scope-head">
+            <div>
+              <div class="scope-title">開口面 — 素子配置</div>
+              <div class="scope-sub" id="apertureSub">N = — 素子</div>
+            </div>
+          </div>
+          <div class="canvas-holder" id="apHolder">
+            <canvas id="apCanvas"></canvas>
+            <div class="tooltip" id="apTip"></div>
+          </div>
+          <div class="legend">
+            <span>振幅 弱</span>
+            <span class="bar" style="background:linear-gradient(to right,var(--seq-0),var(--seq-1),var(--seq-2),var(--seq-3),var(--seq-4),var(--seq-5),var(--seq-6));"></span>
+            <span>強</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="scope-head">
+            <div>
+              <div class="scope-title">遠方界パターン — u/v 平面</div>
+              <div class="scope-sub" id="ffSub">正規化利得 [dB]</div>
+            </div>
+          </div>
+          <div class="canvas-holder" id="ffHolder">
+            <canvas id="ffCanvas"></canvas>
+            <div class="tooltip" id="ffTip"></div>
+          </div>
+          <div class="legend">
+            <span>-40dB</span>
+            <span class="bar" style="background:linear-gradient(to right,var(--seq-0),var(--seq-1),var(--seq-2),var(--seq-3),var(--seq-4),var(--seq-5),var(--seq-6));"></span>
+            <span>0dB</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel cutpanel">
+        <div class="scope-head">
+          <div>
+            <div class="scope-title">主平面カット(φ = 走査方位角)</div>
+            <div class="scope-sub" id="cutSub">θ = -90° 〜 90°</div>
+          </div>
+        </div>
+        <div class="canvas-holder" id="cutHolder">
+          <canvas id="cutCanvas"></canvas>
+          <div class="tooltip" id="cutTip"></div>
+        </div>
+      </div>
+
+      <footer class="note">
+        素子は等方性・全同位相励振のオン/オフを仮定した理想化モデル(T/R モジュール損失・相互結合・給電網の誤差は含まない)。ビーム幅・最大サイドローブ値はこの遠方界計算から実測。推定利得は連続開口の開口効率近似値に基づく概算。
+      </footer>
+
+    </main>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const C = 299792458;
+  const R = 0.15; // aperture radius, m (fixed: 300mm diameter)
+
+  // ---------- taper reference table (Balanis, continuous circular aperture (1-r^2)^p) ----------
+  const TAPER_REF = {
+    0: { name:"一様照射", eta:1.00,  sllTheory:-17.6, bwFactor:1.00 },
+    1: { name:"パラボラ (1-r²)¹", eta:0.75,  sllTheory:-24.6, bwFactor:1.27 },
+    2: { name:"パラボラ² (1-r²)²", eta:0.5556, sllTheory:-30.6, bwFactor:1.47 },
+  };
+
+  const SEQ_STOPS = [
+    [0.00, [20,13,8]],
+    [0.15, [58,36,20]],
+    [0.35, [107,63,32]],
+    [0.55, [163,90,40]],
+    [0.75, [217,138,74]],
+    [0.90, [242,184,119]],
+    [1.00, [251,227,191]],
+  ];
+  function seqColor(t){
+    t = Math.max(0, Math.min(1, t));
+    for(let i=0;i<SEQ_STOPS.length-1;i++){
+      const [t0,c0] = SEQ_STOPS[i], [t1,c1] = SEQ_STOPS[i+1];
+      if(t>=t0 && t<=t1){
+        const f = (t1===t0)?0:(t-t0)/(t1-t0);
+        return [
+          Math.round(c0[0]+(c1[0]-c0[0])*f),
+          Math.round(c0[1]+(c1[1]-c0[1])*f),
+          Math.round(c0[2]+(c1[2]-c0[2])*f),
+        ];
+      }
+    }
+    return SEQ_STOPS[SEQ_STOPS.length-1][1];
+  }
+
+  // ---------- physics ----------
+  function buildElements(freqHz, spacingFactor, lattice, taperP){
+    const lambda = C/freqHz;
+    const d = spacingFactor*lambda;
+    const k = 2*Math.PI/lambda;
+    const elems = [];
+    if(lattice === 'square'){
+      const n = Math.ceil(R/d)+1;
+      for(let i=-n;i<=n;i++){
+        for(let j=-n;j<=n;j++){
+          const x=i*d, y=j*d, r=Math.hypot(x,y);
+          if(r<=R) elems.push({x,y,r,w:1});
+        }
+      }
+    } else {
+      const dy = d*Math.sqrt(3)/2;
+      const nrows = Math.ceil(R/dy)+1;
+      for(let row=-nrows; row<=nrows; row++){
+        const y = row*dy;
+        const xoff = (Math.abs(row%2)===1) ? d/2 : 0;
+        const n = Math.ceil(R/d)+1;
+        for(let i=-n;i<=n;i++){
+          const x = i*d+xoff, r = Math.hypot(x,y);
+          if(r<=R) elems.push({x,y,r,w:1});
+        }
+      }
+    }
+    for(const e of elems){
+      const rr = Math.min(e.r/R,1);
+      e.w = (taperP===0) ? 1 : Math.pow(1-rr*rr, taperP);
+    }
+    let wsum=0;
+    for(const e of elems) wsum += e.w;
+    return { elems, lambda, d, k, wsum };
+  }
+
+  function afDb(elems, k, u, v, u0, v0, wsum){
+    let re=0, im=0;
+    for(let i=0;i<elems.length;i++){
+      const e = elems[i];
+      const ph = k*(e.x*(u-u0) + e.y*(v-v0));
+      re += e.w*Math.cos(ph);
+      im += e.w*Math.sin(ph);
+    }
+    const mag = Math.hypot(re,im);
+    return 20*Math.log10(mag/wsum + 1e-12);
+  }
+
+  function principalCut(elems, k, u0, v0, phiS, wsum){
+    const pts = [];
+    for(let a=-90; a<=90; a+=0.25){
+      const rad = a*Math.PI/180;
+      const u = Math.sin(rad)*Math.cos(phiS);
+      const v = Math.sin(rad)*Math.sin(phiS);
+      pts.push([a, afDb(elems,k,u,v,u0,v0,wsum)]);
+    }
+    return pts;
+  }
+
+  function measurePattern(pts){
+    let peakIdx=0;
+    for(let i=1;i<pts.length;i++) if(pts[i][1]>pts[peakIdx][1]) peakIdx=i;
+    const peakDb = pts[peakIdx][1];
+    function crossing(dir){
+      let i=peakIdx;
+      while(i>0 && i<pts.length-1 && (pts[i][1]-peakDb) > -3) i+=dir;
+      const a0=pts[i-dir], a1=pts[i];
+      if(!a0) return pts[0][0];
+      const t = (-3-(a0[1]-peakDb)) / ((a1[1]-peakDb)-(a0[1]-peakDb));
+      return a0[0] + t*(a1[0]-a0[0]);
+    }
+    const left = crossing(-1), right = crossing(1);
+    const hpbw = Math.max(0.01, right-left);
+    function firstNull(dir){
+      let i=peakIdx;
+      while(i>0 && i<pts.length-1){
+        const prev=pts[i-dir][1], cur=pts[i][1], next=pts[i+dir][1];
+        if(cur<prev && cur<next) return i;
+        i+=dir;
+        if(i<=0 || i>=pts.length-1) break;
+      }
+      return i;
+    }
+    const nullL = firstNull(-1), nullR = firstNull(1);
+    let sllDb=-999, sllAngle=null;
+    for(let i=0;i<pts.length;i++){
+      if(i>nullL && i<nullR) continue;
+      if(pts[i][1] > sllDb){ sllDb=pts[i][1]; sllAngle=pts[i][0]; }
+    }
+    return { peakDb, peakAngle:pts[peakIdx][0], hpbw, sllDb, sllAngle };
+  }
+
+  function buildFarFieldGrid(elems, k, u0, v0, wsum, gridN){
+    const data = new Float32Array(gridN*gridN);
+    for(let j=0;j<gridN;j++){
+      const v = -1 + 2*j/(gridN-1);
+      for(let i=0;i<gridN;i++){
+        const u = -1 + 2*i/(gridN-1);
+        if(u*u+v*v>1){ data[j*gridN+i] = NaN; continue; }
+        data[j*gridN+i] = afDb(elems,k,u,v,u0,v0,wsum);
+      }
+    }
+    return data;
+  }
+
+  function findGratingLobe(data, gridN, u0, v0, hpbwDeg){
+    const maskRad = Math.sin(Math.max(hpbwDeg*2.5, 8)*Math.PI/180);
+    let best = null;
+    for(let j=1;j<gridN-1;j++){
+      const v = -1 + 2*j/(gridN-1);
+      for(let i=1;i<gridN-1;i++){
+        const u = -1 + 2*i/(gridN-1);
+        const val = data[j*gridN+i];
+        if(!isFinite(val) || val < -6) continue;
+        if(Math.hypot(u-u0,v-v0) < maskRad) continue;
+        const nb = [data[j*gridN+i-1], data[j*gridN+i+1], data[(j-1)*gridN+i], data[(j+1)*gridN+i]];
+        if(nb.some(x=>!isFinite(x))) continue;
+        if(val>=nb[0] && val>=nb[1] && val>=nb[2] && val>=nb[3]){
+          if(!best || val>best.val){
+            const theta = Math.asin(Math.min(1,Math.hypot(u,v)))*180/Math.PI;
+            const phi = Math.atan2(v,u)*180/Math.PI;
+            best = { val, theta, phi };
+          }
+        }
+      }
+    }
+    return best;
+  }
+
+  // ---------- state ----------
+  const state = {
+    freqGHz: 10,
+    spacing: 0.5,
+    lattice: 'triangular',
+    taperP: 1,
+    theta: 25,
+    phi: 0,
+  };
+
+  // ---------- DOM ----------
+  const $ = (id)=>document.getElementById(id);
+  const elFreq=$('freq'), elSpacing=$('spacing'), elTheta=$('theta'), elPhi=$('phi'), elTaper=$('taper');
+  const vFreq=$('vFreq'), vSpacing=$('vSpacing'), vTheta=$('vTheta'), vPhi=$('vPhi');
+  const bandHint=$('bandHint'), specLattice=$('specLattice');
+  const statgrid=$('statgrid');
+  const apCanvas=$('apCanvas'), ffCanvas=$('ffCanvas'), cutCanvas=$('cutCanvas');
+  const apHolder=$('apHolder'), ffHolder=$('ffHolder'), cutHolder=$('cutHolder');
+  const apTip=$('apTip'), ffTip=$('ffTip'), cutTip=$('cutTip');
+  const apertureSub=$('apertureSub'), ffSub=$('ffSub'), cutSub=$('cutSub');
+  const latticeSeg=$('latticeSeg');
+
+  function bandName(ghz){
+    if(ghz<4) return 'S バンド';
+    if(ghz<8) return 'C バンド';
+    if(ghz<12) return 'X バンド';
+    if(ghz<18) return 'Ku バンド';
+    return 'K バンド';
+  }
+
+  function setupCanvas(canvas, cssW, cssH){
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(cssW*dpr);
+    canvas.height = Math.round(cssH*dpr);
+    canvas.style.width = cssW+'px';
+    canvas.style.height = cssH+'px';
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return ctx;
+  }
+
+  let lastCompute = null;
+
+  function recompute(){
+    const freqHz = state.freqGHz*1e9;
+    const { elems, lambda, d, k, wsum } = buildElements(freqHz, state.spacing, state.lattice, state.taperP);
+
+    const thetaRad = state.theta*Math.PI/180;
+    const phiRad = state.phi*Math.PI/180;
+    const u0 = Math.sin(thetaRad)*Math.cos(phiRad);
+    const v0 = Math.sin(thetaRad)*Math.sin(phiRad);
+
+    const cutPts = principalCut(elems, k, u0, v0, phiRad, wsum);
+    const meas = measurePattern(cutPts);
+
+    const gridN = elems.length>1200 ? 61 : elems.length>600 ? 81 : 101;
+    const grid = buildFarFieldGrid(elems, k, u0, v0, wsum, gridN);
+    const grating = findGratingLobe(grid, gridN, u0, v0, meas.hpbw);
+
+    const ref = TAPER_REF[state.taperP];
+    const A = Math.PI*R*R;
+    const D0 = 4*Math.PI*A*ref.eta/(lambda*lambda);
+    const scanLossDb = -10*Math.log10(Math.max(Math.cos(thetaRad), 1e-6));
+    const gainDbi = 10*Math.log10(D0) - scanLossDb;
+
+    lastCompute = { elems, lambda, d, k, wsum, u0, v0, cutPts, meas, gridN, grid, grating, ref, scanLossDb, gainDbi };
+    render();
+  }
+
+  function fmt(n, digits){ return n.toFixed(digits); }
+
+  function render(){
+    const s = lastCompute;
+    if(!s) return;
+
+    // header readouts
+    vFreq.textContent = state.freqGHz.toFixed(1)+' GHz';
+    vSpacing.textContent = state.spacing.toFixed(2);
+    vTheta.textContent = state.theta+'°';
+    vPhi.textContent = state.phi+'°';
+    bandHint.textContent = bandName(state.freqGHz)+' — 波長 '+(s.lambda*1000).toFixed(1)+' mm';
+    specLattice.textContent = state.lattice==='triangular' ? '三角(六方)' : '正方';
+    apertureSub.textContent = 'N = '+s.elems.length+' 素子 ・ d = '+(s.d*1000).toFixed(1)+' mm';
+    ffSub.textContent = '走査先 θ='+state.theta+'° φ='+state.phi+'°';
+    cutSub.textContent = 'φ = '+state.phi+'° 断面 ・ ピーク '+s.meas.peakAngle.toFixed(1)+'°';
+
+    renderStats(s);
+    renderAperture(s);
+    renderFarField(s);
+    renderCut(s);
+  }
+
+  function renderStats(s){
+    const grating = s.grating;
+    const statusChip = grating
+      ? '<span class="chip critical"><span class="dot"></span>グレーティングローブ検出</span>'
+      : '<span class="chip good"><span class="dot"></span>可視空間内クリア</span>';
+    const statusDetail = grating
+      ? 'θ='+grating.theta.toFixed(1)+'° φ='+grating.phi.toFixed(0)+'° 付近に '+grating.val.toFixed(1)+' dB のローブ。素子間隔を狭めるか走査角を下げること。'
+      : '現在の d/λ と走査角の組み合わせでは可視空間(|u,v|≤1)内にグレーティングローブは生じない。';
+
+    statgrid.innerHTML = [
+      tile('素子数 N', s.elems.length, '素子', ''),
+      tile('波長 λ', (s.lambda*1000).toFixed(2), 'mm', ''),
+      tile('素子間隔 d', (s.d*1000).toFixed(2), 'mm', (s.d/s.lambda).toFixed(2)+' λ'),
+      tile('走査損失', fmt(s.scanLossDb,2), 'dB', 'cosθ 近似'),
+      tile('推定利得', fmt(s.gainDbi,1), 'dBi', '開口効率 '+(s.ref.eta*100).toFixed(0)+'%'),
+      tile('ビーム幅(実測)', fmt(s.meas.hpbw,2), '°', '連続開口理論 '+(58.4*s.lambda/(2*R)*s.ref.bwFactor).toFixed(1)+'°'),
+      tile('最大 SLL(実測)', fmt(s.meas.sllDb,1), 'dB', '理論値 '+s.ref.sllTheory.toFixed(1)+' dB'),
+      '<div class="stat status"><div>'+statusChip+'<div class="detail" style="margin-top:6px">'+statusDetail+'</div></div></div>',
+    ].join('');
+  }
+  function tile(lab,val,unit,sub){
+    return '<div class="stat"><div class="lab">'+lab+'</div><div class="v mono">'+val+'<span class="unit">'+unit+'</span></div>'+(sub?'<div class="sub">'+sub+'</div>':'')+'</div>';
+  }
+
+  // ---- aperture element map ----
+  function renderAperture(s){
+    const holder = apHolder;
+    const size = holder.clientWidth;
+    const ctx = setupCanvas(apCanvas, size, size);
+    ctx.clearRect(0,0,size,size);
+    const cx=size/2, cy=size/2;
+    const px = (size*0.44)/R; // px per meter
+
+    ctx.strokeStyle = 'rgba(255,255,255,.06)';
+    ctx.lineWidth=1;
+    [0.25,0.5,0.75,1.0].forEach(f=>{
+      ctx.beginPath();
+      ctx.arc(cx,cy,R*px*f,0,Math.PI*2);
+      ctx.stroke();
+    });
+    ctx.strokeStyle = '#3a4757';
+    ctx.beginPath(); ctx.moveTo(cx-R*px,cy); ctx.lineTo(cx+R*px,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,cy-R*px); ctx.lineTo(cx,cy+R*px); ctx.stroke();
+
+    const dotR = Math.max(1.4, Math.min(5, s.d*px*0.32));
+    for(const e of s.elems){
+      const [r,g,b] = seqColor(e.w);
+      ctx.fillStyle = 'rgb('+r+','+g+','+b+')';
+      ctx.beginPath();
+      ctx.arc(cx+e.x*px, cy-e.y*px, dotR, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    ctx.strokeStyle = '#3a4757';
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,R*px,0,Math.PI*2); ctx.stroke();
+
+    // scan direction arrow
+    const arrowLen = Math.sin(state.theta*Math.PI/180)*R*px;
+    const ax = cx + Math.cos(state.phi*Math.PI/180)*arrowLen;
+    const ay = cy - Math.sin(state.phi*Math.PI/180)*arrowLen;
+    ctx.strokeStyle = '#d98a4a';
+    ctx.fillStyle = '#d98a4a';
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ax,ay); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ax,ay,4,0,Math.PI*2); ctx.fill();
+
+    apCanvas.onmousemove = (ev)=>{
+      const rect = apCanvas.getBoundingClientRect();
+      const mx = ev.clientX-rect.left, my = ev.clientY-rect.top;
+      const xm=(mx-cx)/px, ym=-(my-cy)/px;
+      let nearest=null, nd=Infinity;
+      for(const e of s.elems){
+        const dd=(e.x-xm)*(e.x-xm)+(e.y-ym)*(e.y-ym);
+        if(dd<nd){ nd=dd; nearest=e; }
+      }
+      if(nearest && Math.sqrt(nd) < s.d*0.9){
+        apTip.innerHTML = 'x=<b>'+(nearest.x*1000).toFixed(1)+'</b>mm y=<b>'+(nearest.y*1000).toFixed(1)+'</b>mm<br>振幅重み <b>'+nearest.w.toFixed(2)+'</b>';
+        apTip.style.left=mx+'px'; apTip.style.top=(my-10)+'px';
+        apTip.classList.add('show');
+      } else {
+        apTip.classList.remove('show');
+      }
+    };
+    apCanvas.onmouseleave = ()=>apTip.classList.remove('show');
+  }
+
+  // ---- far field heatmap ----
+  function renderFarField(s){
+    const holder = ffHolder;
+    const size = holder.clientWidth;
+    const off = document.createElement('canvas');
+    off.width = s.gridN; off.height = s.gridN;
+    const octx = off.getContext('2d');
+    const img = octx.createImageData(s.gridN, s.gridN);
+    for(let j=0;j<s.gridN;j++){
+      for(let i=0;i<s.gridN;i++){
+        const idx = j*s.gridN+i;
+        const val = s.grid[idx];
+        const pi = (( (s.gridN-1-j) *s.gridN)+i)*4;
+        if(!isFinite(val)){
+          img.data[pi]=17; img.data[pi+1]=22; img.data[pi+2]=30; img.data[pi+3]=255;
+        } else {
+          const t = Math.max(0, Math.min(1, (val+40)/40));
+          const [r,g,b] = seqColor(t);
+          img.data[pi]=r; img.data[pi+1]=g; img.data[pi+2]=b; img.data[pi+3]=255;
+        }
+      }
+    }
+    octx.putImageData(img,0,0);
+
+    const ctx = setupCanvas(ffCanvas, size, size);
+    ctx.imageSmoothingEnabled = true;
+    ctx.clearRect(0,0,size,size);
+    ctx.drawImage(off,0,0,size,size);
+
+    const cx=size/2, cy=size/2, rad=size*0.48;
+    ctx.strokeStyle='rgba(255,255,255,.16)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([3,3]);
+    [30,60].forEach(deg=>{
+      ctx.beginPath();
+      ctx.arc(cx,cy, rad*Math.sin(deg*Math.PI/180), 0, Math.PI*2);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.strokeStyle='rgba(255,255,255,.22)';
+    ctx.beginPath(); ctx.arc(cx,cy,rad,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-rad,cy); ctx.lineTo(cx+rad,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,cy-rad); ctx.lineTo(cx,cy+rad); ctx.stroke();
+
+    // boresight marker
+    ctx.strokeStyle='#e8edf3';
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cx-5,cy); ctx.lineTo(cx+5,cy); ctx.moveTo(cx,cy-5); ctx.lineTo(cx,cy+5); ctx.stroke();
+
+    // steering marker
+    const sx = cx+s.u0*rad, sy = cy-s.v0*rad;
+    ctx.strokeStyle='#5fd6b0';
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(sx,sy,5,0,Math.PI*2); ctx.stroke();
+
+    if(s.grating){
+      const gu = Math.sin(s.grating.theta*Math.PI/180)*Math.cos(s.grating.phi*Math.PI/180);
+      const gv = Math.sin(s.grating.theta*Math.PI/180)*Math.sin(s.grating.phi*Math.PI/180);
+      const gx = cx+gu*rad, gy=cy-gv*rad;
+      ctx.strokeStyle='#e2634f';
+      ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(gx,gy,7,0,Math.PI*2); ctx.stroke();
+    }
+
+    ffCanvas.onmousemove = (ev)=>{
+      const rect = ffCanvas.getBoundingClientRect();
+      const mx=ev.clientX-rect.left, my=ev.clientY-rect.top;
+      const u=(mx-cx)/rad, v=-(my-cy)/rad;
+      if(u*u+v*v>1){ ffTip.classList.remove('show'); return; }
+      const theta = Math.asin(Math.min(1,Math.hypot(u,v)))*180/Math.PI;
+      const phi = Math.atan2(v,u)*180/Math.PI;
+      const gi = Math.round((u+1)/2*(s.gridN-1));
+      const gj = Math.round((v+1)/2*(s.gridN-1));
+      const val = s.grid[gj*s.gridN+gi];
+      ffTip.innerHTML = 'θ=<b>'+theta.toFixed(1)+'</b>° φ=<b>'+phi.toFixed(0)+'</b>°<br>利得 <b>'+(isFinite(val)?val.toFixed(1):'—')+'</b> dB';
+      ffTip.style.left=mx+'px'; ffTip.style.top=(my-10)+'px';
+      ffTip.classList.add('show');
+    };
+    ffCanvas.onmouseleave=()=>ffTip.classList.remove('show');
+  }
+
+  // ---- 1D principal cut ----
+  function renderCut(s){
+    const holder = cutHolder;
+    const w = holder.clientWidth, h = holder.clientHeight;
+    const ctx = setupCanvas(cutCanvas, w, h);
+    ctx.clearRect(0,0,w,h);
+
+    const padL=40, padR=14, padT=14, padB=28;
+    const plotW = w-padL-padR, plotH = h-padT-padB;
+    const dbMin=-50, dbMax=0;
+    const aMin=-90, aMax=90;
+    const xOf = (a)=> padL + (a-aMin)/(aMax-aMin)*plotW;
+    const yOf = (db)=> padT + (1-(Math.max(dbMin,Math.min(dbMax,db))-dbMin)/(dbMax-dbMin))*plotH;
+
+    ctx.strokeStyle='rgba(255,255,255,.06)';
+    ctx.fillStyle='#5f7185';
+    ctx.font='10px "IBM Plex Mono", monospace';
+    ctx.lineWidth=1;
+    for(let db=dbMin; db<=dbMax; db+=10){
+      const y=yOf(db);
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+      ctx.fillText(db+'', 4, y+3);
+    }
+    for(let a=aMin; a<=aMax; a+=30){
+      const x=xOf(a);
+      ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,h-padB); ctx.stroke();
+      ctx.fillText(a+'°', x-10, h-padB+14);
+    }
+
+    // scan angle marker
+    const scanX = xOf(state.theta);
+    ctx.strokeStyle='rgba(95,214,176,.55)';
+    ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(scanX,padT); ctx.lineTo(scanX,h-padB); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // filled trace
+    ctx.beginPath();
+    ctx.moveTo(xOf(s.cutPts[0][0]), yOf(dbMin));
+    for(const [a,db] of s.cutPts) ctx.lineTo(xOf(a), yOf(db));
+    ctx.lineTo(xOf(s.cutPts[s.cutPts.length-1][0]), yOf(dbMin));
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0,padT,0,h-padB);
+    grad.addColorStop(0,'rgba(217,138,74,.32)');
+    grad.addColorStop(1,'rgba(217,138,74,0)');
+    ctx.fillStyle=grad;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(xOf(s.cutPts[0][0]), yOf(s.cutPts[0][1]));
+    for(const [a,db] of s.cutPts) ctx.lineTo(xOf(a), yOf(db));
+    ctx.strokeStyle='#e7ac6c';
+    ctx.lineWidth=1.8;
+    ctx.stroke();
+
+    ctx.fillStyle='#e8edf3';
+    ctx.font='10.5px "IBM Plex Mono", monospace';
+    ctx.textAlign='left';
+
+    cutCanvas.onmousemove=(ev)=>{
+      const rect=cutCanvas.getBoundingClientRect();
+      const mx=ev.clientX-rect.left;
+      const a = aMin + (mx-padL)/plotW*(aMax-aMin);
+      if(a<aMin || a>aMax){ cutTip.classList.remove('show'); return; }
+      let idx = Math.round((a-aMin)/0.25);
+      idx = Math.max(0, Math.min(s.cutPts.length-1, idx));
+      const [aa,db] = s.cutPts[idx];
+      cutTip.innerHTML = 'θ=<b>'+aa.toFixed(1)+'</b>°<br>利得 <b>'+db.toFixed(1)+'</b> dB';
+      cutTip.style.left = xOf(aa)+'px';
+      cutTip.style.top = (yOf(db)-10)+'px';
+      cutTip.classList.add('show');
+    };
+    cutCanvas.onmouseleave=()=>cutTip.classList.remove('show');
+  }
+
+  // ---------- wiring ----------
+  function bindRange(el, key, labelEl, fmtFn){
+    el.addEventListener('input', ()=>{
+      state[key] = parseFloat(el.value);
+      if(labelEl) labelEl.textContent = fmtFn(state[key]);
+      scheduleRecompute();
+    });
+  }
+  elFreq.addEventListener('input', ()=>{ state.freqGHz=parseFloat(elFreq.value); scheduleRecompute(); });
+  elSpacing.addEventListener('input', ()=>{ state.spacing=parseFloat(elSpacing.value); scheduleRecompute(); });
+  elTheta.addEventListener('input', ()=>{ state.theta=parseFloat(elTheta.value); scheduleRecompute(); });
+  elPhi.addEventListener('input', ()=>{ state.phi=parseFloat(elPhi.value); scheduleRecompute(); });
+  elTaper.addEventListener('change', ()=>{ state.taperP=parseInt(elTaper.value,10); scheduleRecompute(); });
+  latticeSeg.addEventListener('click', (ev)=>{
+    const btn = ev.target.closest('button');
+    if(!btn) return;
+    state.lattice = btn.dataset.v;
+    [...latticeSeg.children].forEach(b=>b.classList.toggle('on', b===btn));
+    scheduleRecompute();
+  });
+
+  let pending=null;
+  function scheduleRecompute(){
+    if(pending) clearTimeout(pending);
+    pending = setTimeout(()=>{ pending=null; recompute(); }, 90);
+  }
+  window.addEventListener('resize', ()=>{ if(lastCompute) render(); });
+
+  recompute();
+})();
+</script>
+</body>
+</html>
