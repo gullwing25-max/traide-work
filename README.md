@@ -69,3 +69,40 @@ CSVパース、FIFO突合(全量/部分決済/現引/未突合)、反実仮想�
 
 - 発注・注文APIには触れない(分析専用)
 - 結果に対する投資判断のコメントはしない
+
+## 日次資金流入量トラッキング(J-Quants不使用)
+
+J-Quantsを使わず、yfinance(Yahoo Finance、APIキー不要)経由で個別銘柄の
+日次資金流入量をトラックするツール。上記のバックテストとは独立した機能。
+
+### 定義
+
+日次売買代金(終値×出来高)に、前日比で値上がり日は`+`、値下がり日は`-`の符号を
+付けたもの(Chaikin Money Flow的な近似)。実際の買い方・売り方を約定単位で
+特定しているわけではない推定値であることに注意。
+
+### 実行手順
+
+```bash
+pip install -r requirements.txt
+
+# 約定履歴CSVに出てくる銘柄を自動抽出してトラック
+python scripts/fetch_money_flow.py --csv SaveFile_000001_004203.csv \
+    --start 2025-10-01 --end 2026-06-14
+
+# 銘柄コードを直接指定することも可能
+python scripts/fetch_money_flow.py --codes 7203,9984,6758 \
+    --start 2025-10-01 --end 2026-06-14
+```
+
+- 取得結果は銘柄ごとに `data/money_flow/{code}.parquet` にキャッシュされ、再実行時は
+  キャッシュを読むだけになる(再取得したい場合はキャッシュファイルを削除する)。
+- 出力: `results/money_flow_daily.csv`(日次明細)、
+  `results/money_flow_summary.md`(銘柄別サマリー・直近移動合計ランキング)、
+  `results/money_flow_top.png`(累積資金流入額 上位銘柄の推移チャート)。
+
+### 自己検証(合成データ、実データ・ネットワーク不要)
+
+```bash
+python3 tests/test_money_flow.py
+```
